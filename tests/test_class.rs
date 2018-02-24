@@ -66,6 +66,37 @@ fn class_with_docstr() {
     }
 }
 
+/**
+ * A long-form docstring.
+ * With lots of info.
+ */
+#[py::class]
+struct ClassWithLongDocs { }
+
+#[test]
+fn class_with_long_docstr() {
+    {
+        let gil = Python::acquire_gil();
+        let py = gil.python();
+        let typeobj = py.get_type::<ClassWithLongDocs>();
+        py_run!(py, typeobj, "assert typeobj.__doc__ == 'A long-form docstring.\\nWith lots of info.'");
+    }
+}
+
+/// This doc has \ weird " characters.
+#[py::class]
+struct ClassWithWeirdDocs { }
+
+#[test]
+fn class_with_weird_docstr() {
+    {
+        let gil = Python::acquire_gil();
+        let py = gil.python();
+        let typeobj = py.get_type::<ClassWithWeirdDocs>();
+        py_run!(py, typeobj, r#"assert typeobj.__doc__ == 'This doc has \\ weird " characters.'"#);
+    }
+}
+
 #[py::class(name=CustomName)]
 struct EmptyClass2 { }
 
